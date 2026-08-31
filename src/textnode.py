@@ -40,3 +40,34 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
             return LeafNode("img", None, {"src":f"{text_node.url}", "alt":f"text_node.text"})
         case _: # default:
             raise Exception("unhandled TextType of TextNode")
+
+def raise_if_not_valid_syntax(text: str, delimiter: str) -> bool:
+    valid_syntax = 0
+    for c in text:
+        if c == delimiter:
+            if valid_syntax == 0:
+                valid_syntax = 1
+            elif valid_syntax == 1:
+                valid_syntax = 0
+    if valid_syntax != 0:
+        raise Exception("unclosed delimiter")
+
+def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: TextType) -> list[TextNode]:
+    ret = []
+    for old_node in old_nodes:
+        if old_node.text_type != TextType.PLAIN:
+            ret += old_node
+            continue
+
+    raise_if_not_valid_syntax(old_node.text, delimiter)
+    
+    splited = old_node.text.split(delimiter)
+    for idx, t in enumerate(splited):
+        if len(t) == 0:
+            continue
+        if idx % 2 == 0:
+            ret.append(TextNode(t, TextType.PLAIN))
+        else:
+            ret.append(TextNode(t, text_type))
+
+    return ret
