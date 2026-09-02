@@ -71,3 +71,43 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
             ret.append(TextNode(t, text_type))
 
     return ret
+
+import re
+
+def extract_markdown_images(text: str) -> list[tuple[str, str]]:
+    return re.findall(r"\!\[(.+?)\]\((.+?)\)", text)
+
+def extract_markdown_links(text: str) -> list[tuple[str, str]]:
+    return re.findall(r"(?<!\!)\[(.+?)\]\((.+?)\)", text)
+
+
+def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
+    ret: list[TextNode] = []
+    for old_node in old_nodes:
+        images = extract_markdown_images(old_node.text)
+        img_idx = 0
+        splitted = re.split(r"\!\[.+?\]\(.+?\)", old_node.text)
+        for idx, text in enumerate(splitted):
+            if idx == len(splitted) - 1:
+                continue
+            if len(text) != 0:
+                ret.append(TextNode(text, TextType.PLAIN))
+            ret.append(TextNode(images[img_idx][0], TextType.IMAGE, images[img_idx][1]))
+            img_idx += 1
+    return ret
+
+
+def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
+    ret: list[TextNode] = []
+    for old_node in old_nodes:
+        links = extract_markdown_links(old_node.text)
+        link_idx = 0
+        splitted = re.split(r"(?<!\!)\[.+?\]\(.+?\)", old_node.text)
+        for idx, text in enumerate(splitted):
+            if idx == len(splitted) - 1:
+                continue
+            if len(text) != 0:
+                ret.append(TextNode(text, TextType.PLAIN))
+            ret.append(TextNode(links[link_idx][0], TextType.LINK, links[link_idx][1]))
+            link_idx += 1
+    return ret
