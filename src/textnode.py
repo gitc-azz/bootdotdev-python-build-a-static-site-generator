@@ -56,19 +56,19 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
     ret = []
     for old_node in old_nodes:
         if old_node.text_type != TextType.PLAIN:
-            ret += old_node
+            ret.append(old_node)
             continue
 
-    raise_if_not_valid_syntax(old_node.text, delimiter)
-    
-    splited = old_node.text.split(delimiter)
-    for idx, t in enumerate(splited):
-        if len(t) == 0:
-            continue
-        if idx % 2 == 0:
-            ret.append(TextNode(t, TextType.PLAIN))
-        else:
-            ret.append(TextNode(t, text_type))
+        raise_if_not_valid_syntax(old_node.text, delimiter)
+        
+        splited = old_node.text.split(delimiter)
+        for idx, t in enumerate(splited):
+            if len(t) == 0:
+                continue
+            if idx % 2 == 0:
+                ret.append(TextNode(t, TextType.PLAIN))
+            else:
+                ret.append(TextNode(t, text_type))
 
     return ret
 
@@ -84,14 +84,17 @@ def extract_markdown_links(text: str) -> list[tuple[str, str]]:
 def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     ret: list[TextNode] = []
     for old_node in old_nodes:
+        if old_node.text_type != TextType.PLAIN:
+            ret.append(old_node)
+            continue
         images = extract_markdown_images(old_node.text)
         img_idx = 0
         splitted = re.split(r"\!\[.+?\]\(.+?\)", old_node.text)
         for idx, text in enumerate(splitted):
-            if idx == len(splitted) - 1:
-                continue
             if len(text) != 0:
                 ret.append(TextNode(text, TextType.PLAIN))
+            if idx == len(splitted) - 1:
+                continue
             ret.append(TextNode(images[img_idx][0], TextType.IMAGE, images[img_idx][1]))
             img_idx += 1
     return ret
@@ -100,14 +103,29 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
 def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
     ret: list[TextNode] = []
     for old_node in old_nodes:
+        if old_node.text_type != TextType.PLAIN:
+            ret.append(old_node)
+            continue
         links = extract_markdown_links(old_node.text)
         link_idx = 0
         splitted = re.split(r"(?<!\!)\[.+?\]\(.+?\)", old_node.text)
         for idx, text in enumerate(splitted):
-            if idx == len(splitted) - 1:
-                continue
-            if len(text) != 0:
+           if len(text) != 0:
                 ret.append(TextNode(text, TextType.PLAIN))
-            ret.append(TextNode(links[link_idx][0], TextType.LINK, links[link_idx][1]))
-            link_idx += 1
+           if idx == len(splitted) - 1:
+               continue
+           ret.append(TextNode(links[link_idx][0], TextType.LINK, links[link_idx][1]))
+           link_idx += 1
     return ret
+
+
+def text_to_textnodes(text: str) -> list[TextNode]:
+    ret = [TextNode(text, TextType.PLAIN)]
+    ret = split_nodes_delimiter(ret, "**", TextType.BOLD)
+    ret = split_nodes_delimiter(ret, "_", TextType.ITALIC)
+    ret = split_nodes_delimiter(ret, "`", TextType.ONE_LINE_CODE)
+    #ret = split_nodes_delimiter(ret, delimiter: str, TextType)
+    ret = split_nodes_image(ret)
+    ret = split_nodes_link(ret)
+    return ret
+

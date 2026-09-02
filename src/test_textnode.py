@@ -52,6 +52,24 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(new_nodes[4], TextNode("code block", TextType.ONE_LINE_CODE))
         self.assertEqual(new_nodes[5], TextNode(" word", TextType.PLAIN))
 
+
+    def test_split_nodes_delimiter_04(self):
+        node = TextNode("This is **text** with", TextType.PLAIN)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
+        self.assertEqual(len(new_nodes), 3)
+        self.assertEqual(new_nodes[0], TextNode("This is ", TextType.PLAIN))
+        self.assertEqual(new_nodes[1], TextNode("text", TextType.BOLD))
+        self.assertEqual(new_nodes[2], TextNode(" with", TextType.PLAIN))
+
+
+    def test_split_nodes_delimiter_05(self):
+        node = TextNode("This is text with", TextType.PLAIN)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
+        new_nodes = split_nodes_delimiter(new_nodes, "_", TextType.ITALIC)
+        new_nodes = split_nodes_delimiter(new_nodes, "`", TextType.ONE_LINE_CODE)
+        self.assertEqual(len(new_nodes), 1)
+        self.assertEqual(new_nodes[0], TextNode("This is text with", TextType.PLAIN))
+
     def test_extract_markdown_images(self):
         images = extract_markdown_images(
                 "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif)"
@@ -151,6 +169,46 @@ class TestTextNode(unittest.TestCase):
                 ]
             )
 
+
+    def test_text_to_textnodes_00(self):
+        input = "This is text with"
+        self.assertListEqual(
+            text_to_textnodes(input),
+            [
+                TextNode("This is text with", TextType.PLAIN),
+            ]
+        )
+ 
+
+    def test_text_to_textnodes_01(self):
+        input = "This is **text** with"
+        self.assertListEqual(
+            text_to_textnodes(input),
+            [
+                TextNode("This is ", TextType.PLAIN),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with", TextType.PLAIN),
+            ]
+        )
+
+ 
+    def test_text_to_textnodes_2(self):
+        input = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        self.assertListEqual(
+            text_to_textnodes(input),
+            [
+                TextNode("This is ", TextType.PLAIN),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.PLAIN),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.PLAIN),
+                TextNode("code block", TextType.ONE_LINE_CODE),
+                TextNode(" and an ", TextType.PLAIN),
+                TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.PLAIN),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ]
+        )
     
 if __name__ == "__main__":
     unittest.main()
