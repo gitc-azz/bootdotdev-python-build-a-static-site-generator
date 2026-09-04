@@ -15,7 +15,18 @@ a multi
 line with _italic_
 and some `one line code`
 """, "<div><p>I am\na multi\nline with <i>italic</i>\nand some <code>one line code</code></p></div>"
-)
+),
+                ("# heading 1", "<div><h1>heading 1</h1></div>"),
+                ("## heading 2", "<div><h2>heading 2</h2></div>"),
+                ("### heading 3", "<div><h3>heading 3</h3></div>"),
+                ("#### heading 4", "<div><h4>heading 4</h4></div>"),
+                ("##### heading 5", "<div><h5>heading 5</h5></div>"),
+                ("###### heading 6", "<div><h6>heading 6</h6></div>"),
+                (
+"""###### heading 6
+
+followed by simple paragraph
+""", "<div><h6>heading 6</h6><p>followed by simple paragraph</p></div>"),
                 ]
         for tc in tcs:
             self.assertEqual(markdown_to_html_node(tc[0]).to_html(),

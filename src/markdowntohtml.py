@@ -1,4 +1,4 @@
-from htmlnode import ParentNode
+from htmlnode import ParentNode, LeafNode
 from strpreprocess import markdown_to_blocks
 from block import BlockType, block_to_block_type
 from textnode import text_to_textnodes, text_nodes_to_html_nodes
@@ -9,12 +9,20 @@ def create_paragraph(block: str) -> HTMLNode:
     children = text_nodes_to_html_nodes(text_nodes)
     return ParentNode("p", children)
         
+def create_heading(block: str) -> HTMLNode:
+    n = 0
+    while block[n] == '#':
+        n += 1
+    text = block[n+1:]
+    return LeafNode(f"h{n}", text, None)
 
 def block_to_html_node(block: str) -> HTMLNode:
     btype = block_to_block_type(block)
     match btype:
         case BlockType.PARAGRAPH:
             return create_paragraph(block)
+        case BlockType.HEADING:
+            return create_heading(block)
 
 def markdown_to_html_node(markdown: str) -> HTMLNode:
     children = []
