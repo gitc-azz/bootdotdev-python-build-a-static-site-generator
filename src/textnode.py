@@ -41,6 +41,13 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
         case _: # default:
             raise Exception("unhandled TextType of TextNode")
 
+def text_nodes_to_html_nodes(text_nodes: list[TextNode]) -> list[LeafNode]:
+    ret= []
+    for text_node in text_nodes:
+        ret.append(text_node_to_html_node(text_node))
+    return ret
+
+
 def raise_if_not_valid_syntax(text: str, delimiter: str) -> bool:
     valid_syntax = 0
     for c in text:
