@@ -27,6 +27,17 @@ def create_unordered_list(block: str) -> HTMLNode:
         children.append(ParentNode("li", grand_children))
     return ParentNode("ul", children)
 
+def create_ordered_list(block: str) -> HTMLNode:
+    children = []
+    items = block.split("\n")
+    for item in items:
+        if len(item) == 0:
+            continue
+        text_nodes = text_to_textnodes(item[3:])
+        grand_children = text_nodes_to_html_nodes(text_nodes)
+        children.append(ParentNode("li", grand_children))
+    return ParentNode("ol", children)
+
 def block_to_html_node(block: str) -> HTMLNode:
     btype = block_to_block_type(block)
     match btype:
@@ -36,6 +47,8 @@ def block_to_html_node(block: str) -> HTMLNode:
             return create_heading(block)
         case BlockType.UNORDERED_LIST:
             return create_unordered_list(block)
+        case BlockType.ORDERED_LIST:
+            return create_ordered_list(block)
 
 def markdown_to_html_node(markdown: str) -> HTMLNode:
     children = []
