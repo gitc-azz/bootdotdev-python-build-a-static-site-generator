@@ -38,6 +38,31 @@ def create_ordered_list(block: str) -> HTMLNode:
         children.append(ParentNode("li", grand_children))
     return ParentNode("ol", children)
 
+def create_code_block(block: str) -> HTMLNode:
+    inner = LeafNode("code", block[4:-4])
+    return ParentNode("pre", [inner])
+
+def create_quote(block: str) -> HTMLNode:
+    children = []
+    items = block.split("\n")
+    offset = 1
+    paragraph = ""
+    for item in items:
+        extra = 0
+        if item.startswith("> "): # deal with optional leading space after '<'
+            extra += 1
+        if item.strip() == ">":
+            if paragraph != "":
+                children.append(create_paragraph(paragraph))
+                paragraph = ""
+        else:
+            if paragraph != "":
+                paragraph += '\n'
+            paragraph += item[offset + extra:]
+    if paragraph != "":
+        children.append(create_paragraph(paragraph))
+    return ParentNode("blockquote", children)
+
 def block_to_html_node(block: str) -> HTMLNode:
     btype = block_to_block_type(block)
     match btype:
@@ -49,6 +74,10 @@ def block_to_html_node(block: str) -> HTMLNode:
             return create_unordered_list(block)
         case BlockType.ORDERED_LIST:
             return create_ordered_list(block)
+        case BlockType.CODE:
+            return create_code_block(block)
+        case BlockType.QUOTE:
+            return create_quote(block)
 
 def markdown_to_html_node(markdown: str) -> HTMLNode:
     children = []

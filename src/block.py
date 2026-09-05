@@ -21,7 +21,7 @@ def block_to_block_type(block: str) -> BlockType:
         return BlockType.HEADING
     if re.match(r"^```\n(.*\n)*?```$", block) is not None:
         return BlockType.CODE
-    if re.match(r"^(\> ?.+\n?)+$", block) is not None:
+    if re.match(r"^(\> ?.*\n?)+$", block) is not None:
         return BlockType.QUOTE
     if re.match(r"^(\- .+\n?)+$", block) is not None:
         return BlockType.UNORDERED_LIST

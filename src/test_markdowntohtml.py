@@ -51,7 +51,37 @@ followed by simple paragraph
 """,
 "<div><ol><li>not simple with <code>one line code</code></li><li>ordered "
 '<i>italic</i> and <b> bold </b></li><li>list and finally a <a href="https://url/to/y">'
-"link to</a> blabla</li></ol></div>")
+"link to</a> blabla</li></ol></div>"),
+                 (
+"""
+```
+let y = Some(8);
+let x = y.take();
+```
+""", "<div><pre><code>let y = Some(8);\nlet x = y.take();</code></pre></div>"),
+                (
+"""
+> multi
+> line
+>quote
+""", "<div><blockquote><p>multi\nline\nquote</p></blockquote></div>"),
+                 (
+"""
+> multi
+> line
+> 
+> and multi-paragraph
+>quote
+""", "<div><blockquote><p>multi\nline</p><p>and multi-paragraph\nquote</p></blockquote></div>"),
+                 (
+r"""
+> multi
+> line
+> 
+> and multi-paragraph
+> 
+>quote
+""", "<div><blockquote><p>multi\nline</p><p>and multi-paragraph</p><p>quote</p></blockquote></div>")
                 ]
         for tc in tcs:
             self.assertEqual(markdown_to_html_node(tc[0]).to_html(),
