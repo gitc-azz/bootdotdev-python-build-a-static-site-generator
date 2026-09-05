@@ -27,6 +27,22 @@ and some `one line code`
 
 followed by simple paragraph
 """, "<div><h6>heading 6</h6><p>followed by simple paragraph</p></div>"),
+                (
+"""
+- simple
+- unordered
+- list
+""",
+"<div><ul><li>simple</li><li>unordered</li><li>list</li></ul></div>"),
+                (
+"""
+- not simple with `one line code`
+- unordered _italic_ and ** bold **
+- list and finally a [link to](https://url/to/y) blabla
+""",
+"<div><ul><li>not simple with <code>one line code</code></li><li>unordered "
+'<i>italic</i> and <b> bold </b></li><li>list and finally a <a href="https://url/to/y">'
+"link to</a> blabla</li></ul></div>")
                 ]
         for tc in tcs:
             self.assertEqual(markdown_to_html_node(tc[0]).to_html(),
