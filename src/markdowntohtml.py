@@ -14,7 +14,9 @@ def create_heading(block: str) -> HTMLNode:
     while block[n] == '#':
         n += 1
     text = block[n+1:]
-    return LeafNode(f"h{n}", text, None)
+    text_nodes = text_to_textnodes(text)
+    children = text_nodes_to_html_nodes(text_nodes)
+    return ParentNode(f"h{n}", children)
 
 def create_unordered_list(block: str) -> HTMLNode:
     children = []
