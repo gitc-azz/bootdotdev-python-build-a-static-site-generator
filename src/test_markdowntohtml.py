@@ -58,7 +58,7 @@ followed by simple paragraph
 let y = Some(8);
 let x = y.take();
 ```
-""", "<div><pre><code>let y = Some(8);\nlet x = y.take();</code></pre></div>"),
+""", "<div><pre><code>let y = Some(8);\nlet x = y.take();\n</code></pre></div>"),
                 (
 """
 > multi
@@ -81,10 +81,27 @@ r"""
 > and multi-paragraph
 > 
 >quote
-""", "<div><blockquote><p>multi\nline</p><p>and multi-paragraph</p><p>quote</p></blockquote></div>")
+""", "<div><blockquote><p>multi\nline</p><p>and multi-paragraph</p><p>quote</p></blockquote></div>"),
+                 (
+"""
+```
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+""", "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>"),
+                (
+"""
+This is **bolded** paragraph
+text in a p
+tag here
+
+This is another paragraph with _italic_ text and `code` here
+
+""", "<div><p>This is <b>bolded</b> paragraph\ntext in a p\ntag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>")
                 ]
         for tc in tcs:
             self.assertEqual(markdown_to_html_node(tc[0]).to_html(),
                              tc[1])
+
 
 

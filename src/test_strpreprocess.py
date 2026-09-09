@@ -21,3 +21,31 @@ This is the same paragraph on a new line
                 "- This is a list\n- with items",
             ],
         )
+
+    def test_extract_title(self):
+        tcs = [("# title", "title"),
+               ("#    title     ", "title"),
+               ("""
+
+
+# title two
+                """, "title two")]
+
+        for tc in tcs:
+            #print(f"input:{tc[0]} -> {extract_title(tc[0])} vs {tc[1]}")
+            self.assertEqual(extract_title(tc[0]), tc[1])
+
+
+    def test_extract_title_fails(self):
+        tcs = ["""
+        # not a title""",
+               "# ",
+               " # not",
+               " ## not"]
+
+        for tc in tcs:
+            #print(f"{tc}")
+            with self.assertRaises(ValueError):
+                ret = extract_title(tc)
+                #print(f"{ret}")
+

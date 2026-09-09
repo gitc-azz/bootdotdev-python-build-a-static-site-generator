@@ -39,7 +39,7 @@ def create_ordered_list(block: str) -> HTMLNode:
     return ParentNode("ol", children)
 
 def create_code_block(block: str) -> HTMLNode:
-    inner = LeafNode("code", block[4:-4])
+    inner = LeafNode("code", block[4:-3])
     return ParentNode("pre", [inner])
 
 def create_quote(block: str) -> HTMLNode:
