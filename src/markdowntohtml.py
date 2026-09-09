@@ -8,7 +8,7 @@ def create_paragraph(block: str) -> HTMLNode:
     text_nodes = text_to_textnodes(block)
     children = text_nodes_to_html_nodes(text_nodes)
     return ParentNode("p", children)
-        
+
 def create_heading(block: str) -> HTMLNode:
     n = 0
     while block[n] == '#':
@@ -51,17 +51,18 @@ def create_quote(block: str) -> HTMLNode:
         extra = 0
         if item.startswith("> "): # deal with optional leading space after '<'
             extra += 1
-        if item.strip() == ">":
-            if paragraph != "":
-                children.append(create_paragraph(paragraph))
-                paragraph = ""
-        else:
-            if paragraph != "":
-                paragraph += '\n'
-            paragraph += item[offset + extra:]
-    if paragraph != "":
-        children.append(create_paragraph(paragraph))
-    return ParentNode("blockquote", children)
+        # if item.strip() == ">":
+        #     if paragraph != "":
+        #         children.append(create_paragraph(paragraph))
+        #         paragraph = ""
+        # else:
+        if paragraph != "":
+            paragraph += '\n'
+        paragraph += item[offset + extra:]
+    # if paragraph != "":
+    #     children.append(create_paragraph(paragraph))
+    # return ParentNode("blockquote", children)
+    return LeafNode("blockquote", paragraph)
 
 def block_to_html_node(block: str) -> HTMLNode:
     btype = block_to_block_type(block)

@@ -39,17 +39,22 @@ code```"""), BlockType.PARAGRAPH)
         self.assertEqual(block_to_block_type(">I am a quote>"), BlockType.QUOTE)
         self.assertEqual(block_to_block_type("> I am a quote > "), BlockType.QUOTE)
         self.assertEqual(block_to_block_type("> I am a quote> "), BlockType.QUOTE)
-        self.assertEqual(block_to_block_type("""> I am 
+        self.assertEqual(block_to_block_type(
+'''> "I am in fact a Hobbit in all but size."
+>
+> -- J.R.R. Tolkien
+'''), BlockType.QUOTE)
+        self.assertEqual(block_to_block_type("""> I am
 >a multi
 > line
 >quote> """), BlockType.QUOTE)
-        
-        self.assertEqual(block_to_block_type("""> I am 
+
+        self.assertEqual(block_to_block_type("""> I am
 >Not a multi
 > line
-> 
+>
 >quote> """), BlockType.QUOTE)
-        self.assertEqual(block_to_block_type("""> I am 
+        self.assertEqual(block_to_block_type("""> I am
 >Not a multi
 > line
 geth
@@ -90,6 +95,3 @@ geth
         self.assertEqual(block_to_block_type("""1. ordered
 3. list
 2. last item"""), BlockType.PARAGRAPH)
-
-
-

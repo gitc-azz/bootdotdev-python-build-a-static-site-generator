@@ -15,13 +15,13 @@ class TextNode:
         self.text = text
         self.text_type = text_type
         self.url = url
-    
+
     def __eq__(self, other: TextNode):
         return self.text == other.text and self.text_type == other.text_type and self.url == other.url
 
     def __repr__(self) -> Str:
         return f"TextNode({self.text}, {self.text_type.value}, {self.url})"
-    
+
 
 
 def text_node_to_html_node(text_node: TextNode) -> LeafNode:
@@ -37,7 +37,7 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
         case TextType.LINK:
             return LeafNode("a", text_node.text, {"href":f"{text_node.url}"})
         case TextType.IMAGE:
-            return LeafNode("img", None, {"src":f"{text_node.url}", "alt":f"text_node.text"})
+            return LeafNode("img", "", {"src":f"{text_node.url}", "alt":f"text_node.text"})
         case _: # default:
             raise Exception("unhandled TextType of TextNode")
 
@@ -67,7 +67,7 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
             continue
 
         raise_if_not_valid_syntax(old_node.text, delimiter)
-        
+
         splited = old_node.text.split(delimiter)
         for idx, t in enumerate(splited):
             if len(t) == 0:
@@ -135,4 +135,3 @@ def text_to_textnodes(text: str) -> list[TextNode]:
     ret = split_nodes_image(ret)
     ret = split_nodes_link(ret)
     return ret
-
